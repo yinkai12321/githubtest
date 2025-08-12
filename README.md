@@ -8,6 +8,7 @@ A FastAPI service that reads vehicle and path data from Redis and computes a sim
 - `GET /congestion` – returns cells where more than one vehicle or path step are present.
 - `GET /` – simple HTML page that lists congested cells.
 
+
 ## Running
 
 ```bash
