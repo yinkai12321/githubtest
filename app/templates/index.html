@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>RGV Congestion Dashboard</title>
+    <style>
+        table, th, td { border: 1px solid #ccc; border-collapse: collapse; padding: 4px; }
+    </style>
+</head>
+<body>
+    <h1>RGV Congestion Dashboard</h1>
+    <table>
+        <thead>
+            <tr><th>Row</th><th>Col</th><th>Count</th></tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+    <script>
+        async function load() {
+            const res = await fetch('/congestion');
+            const data = await res.json();
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = '';
+            data.congestion.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${item.row}</td><td>${item.col}</td><td>${item.count}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+        load();
+    </script>
+</body>
+</html>
