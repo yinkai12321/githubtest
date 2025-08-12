@@ -2,30 +2,50 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>RGV Congestion Dashboard</title>
+    <title>RGV Congestion Heatmap</title>
     <style>
-        table, th, td { border: 1px solid #ccc; border-collapse: collapse; padding: 4px; }
+        canvas { border: 1px solid #ccc; }
     </style>
 </head>
 <body>
-    <h1>RGV Congestion Dashboard</h1>
-    <table>
-        <thead>
-            <tr><th>Row</th><th>Col</th><th>Count</th></tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-    </table>
+    <h1>RGV Congestion Heatmap</h1>
+    <canvas id="heatmap"></canvas>
     <script>
         async function load() {
             const res = await fetch('/congestion');
             const data = await res.json();
-            const tbody = document.getElementById('tbody');
-            tbody.innerHTML = '';
-            data.congestion.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${item.row}</td><td>${item.col}</td><td>${item.count}</td>`;
-                tbody.appendChild(tr);
+            const items = data.congestion;
+            if (!items.length) {
+                document.body.insertAdjacentHTML('beforeend', '<p>No congestion data.</p>');
+                return;
+            }
+            const maxRow = Math.max(...items.map(i => i.row));
+            const maxCol = Math.max(...items.map(i => i.col));
+            const maxCount = Math.max(...items.map(i => i.count));
+            const cellSize = 30;
+            const canvas = document.getElementById('heatmap');
+            canvas.width = (maxCol + 1) * cellSize;
+            canvas.height = (maxRow + 1) * cellSize;
+            const ctx = canvas.getContext('2d');
+            items.forEach(item => {
+                const intensity = item.count / maxCount;
+                ctx.fillStyle = `rgba(255,0,0,${intensity})`;
+                ctx.fillRect(item.col * cellSize, item.row * cellSize, cellSize, cellSize);
             });
+            ctx.strokeStyle = '#ccc';
+            for (let r = 0; r <= maxRow + 1; r++) {
+                ctx.beginPath();
+                ctx.moveTo(0, r * cellSize);
+                ctx.lineTo(canvas.width, r * cellSize);
+                ctx.stroke();
+            }
+            for (let c = 0; c <= maxCol + 1; c++) {
+                ctx.beginPath();
+                ctx.moveTo(c * cellSize, 0);
+                ctx.lineTo(c * cellSize, canvas.height);
+                ctx.stroke();
+            }
+
         }
         load();
     </script>

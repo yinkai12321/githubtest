@@ -6,8 +6,7 @@ A FastAPI service that reads vehicle and path data from Redis and computes a sim
 
 - `GET /health` – basic health check.
 - `GET /congestion` – returns cells where more than one vehicle or path step are present.
-- `GET /` – simple HTML page that lists congested cells.
-
+- `GET /` – HTML page with a heatmap to visualize congested cells.
 
 ## Running
 
