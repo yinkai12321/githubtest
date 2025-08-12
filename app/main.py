@@ -22,7 +22,6 @@ async def congestion() -> dict:
     data = calculate_congestion(states, paths)
     return {"congestion": data}
 
-
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request) -> HTMLResponse:
     """Serve a simple UI to display congestion information."""
